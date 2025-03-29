@@ -53,7 +53,7 @@ const PortSchedulePage = () => {
     };
 
     return (
-        <Box sx={{maxWidth: 1000, margin: '0 auto', padding: 3}}>
+        <Box sx={{width: 1280, margin: '0 auto', padding: 3, textAlign: 'center'}}>
             <Typography variant="h4" component="h1" gutterBottom>
                 Создание расписания порта
             </Typography>
@@ -69,8 +69,8 @@ const PortSchedulePage = () => {
             <Typography variant="h6" component="h3" gutterBottom>
                 Редактирование списка кораблей
             </Typography>
-            <Grid container spacing={5} alignItems="flex-start">
-                <Grid item xs={2}>
+            <Grid container spacing={5} alignItems="flex" justifyContent="center">
+                <Grid item xs={12} sm={6} md={4}>
                     <Paper elevation={3} sx={{ padding: 2, mb: 5, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Box sx={{ display: 'flex',flexDirection:"column" ,gap: 2, alignItems: 'center', mb: 6 }}>
                             <TextField
@@ -112,7 +112,7 @@ const PortSchedulePage = () => {
 
                     </Paper>
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Paper elevation={3} sx={{ padding: 2, mb: 3, height: '100%'}}>
                         <Typography variant="subtitle1" gutterBottom>
                             Добавленные корабли
