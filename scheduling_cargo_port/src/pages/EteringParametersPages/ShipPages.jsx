@@ -53,19 +53,8 @@ const PortSchedulePage = () => {
     };
 
     return (
-        <Box sx={{maxWidth: 1000, margin: '0 auto', padding: 3}}>
-            <Typography variant="h4" component="h1" gutterBottom>
-                Создание расписания порта
-            </Typography>
-
-
-
+        <Box sx={{margin: '0 auto', padding: 3}}>
             <Divider sx={{my: 3}}/>
-
-            <Typography variant="h5" component="h2" gutterBottom>
-                Редактирование списка терминалов
-            </Typography>
-
             <Typography variant="h6" component="h3" gutterBottom>
                 Редактирование списка кораблей
             </Typography>
