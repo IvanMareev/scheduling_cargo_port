@@ -1,16 +1,18 @@
-import { useState } from 'react'
-import './App.css'
-import MainPages from "./pages/MainPages/MainPages.jsx";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import PortSchedulePage from "./pages/MainPages/MainPages.jsx";
+import SchedulePages from "./pages/SchedulePages/SchedulePages.jsx";
 
 function App() {
-  const [count, setCount] = useState(0)
+    return (<>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<PortSchedulePage/>}/>
+                    <Route path="/schedule" element={<SchedulePages/>}/>
+                </Routes>
+            </Router>
+        </>
 
-  return (
-    <>
-        fh
-      <MainPages></MainPages>
-    </>
-  )
+    );
 }
 
-export default App
+export default App;
