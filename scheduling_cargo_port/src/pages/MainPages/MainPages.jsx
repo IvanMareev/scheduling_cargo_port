@@ -16,7 +16,6 @@ import AddIcon from '@mui/icons-material/Add';
 import {useNavigate} from "react-router";
 
 const PortSchedulePage = () => {
-    const navigate = useNavigate();
     const [ships, setShips] = useState([
         {id: 1, name: 'Аврора', date: '12.04.12'},
         {id: 2, name: 'Владивосток Самара', date: ''},
@@ -35,9 +34,6 @@ const PortSchedulePage = () => {
     const handleChange = (event) => {
         setAge(event.target.value);
     };
-
-
-
 
     const handleAddShip = () => {
         if (newShipName.trim()) {
@@ -62,12 +58,7 @@ const PortSchedulePage = () => {
                 Создание расписания порта
             </Typography>
 
-            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
-                <Button variant="contained">Редактирование списка кораблей</Button>
-                <Button variant="contained">Редактирование списка портов</Button>
-                <Button variant="contained">Редактирование списка терминалов</Button>
-                <Button variant="contained" onClick={()=>navigate('/schedule')}>Проектирование расписания</Button>
-            </Box>
+
 
             <Divider sx={{my: 3}}/>
 
