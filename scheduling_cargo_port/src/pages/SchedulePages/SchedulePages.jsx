@@ -75,7 +75,7 @@ const rows = [
   ),
 ];
 
-const App = () => {
+const SchedulePages = () => {
   return (
     <Box sx={{ bgcolor: 'white', minHeight: '100vh', py: 3 }}>
       <Container maxWidth="lg">
@@ -117,4 +117,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default SchedulePages;
