@@ -54,18 +54,16 @@ const PortSchedulePage = () => {
 
     return (
         <Box sx={{width: 1280, margin: '0 auto', padding: 3, textAlign: 'center'}}>
+<<<<<<< HEAD:scheduling_cargo_port/src/pages/MainPages/MainPages.jsx
             <Typography variant="h4" component="h1" gutterBottom>
                 Создание расписания порта
             </Typography>
 
 
 
+=======
+>>>>>>> 06c49c88f6006cae6e939dabd0114d7f6e275355:scheduling_cargo_port/src/pages/EteringParametersPages/ShipPages.jsx
             <Divider sx={{my: 3}}/>
-
-            <Typography variant="h5" component="h2" gutterBottom>
-                Редактирование списка терминалов
-            </Typography>
-
             <Typography variant="h6" component="h3" gutterBottom>
                 Редактирование списка кораблей
             </Typography>
