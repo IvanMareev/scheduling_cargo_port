@@ -23,6 +23,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import AddIcon from "@mui/icons-material/Add";
+import { jsPDF } from "jspdf";  // Импортируем jsPDF
 
 const SchedulePages = () => {
   const [ships, setShips] = useState([]);
@@ -153,13 +154,51 @@ const SchedulePages = () => {
   // Group ships by day of the week
   const groupedSchedule = groupByDayOfWeek();
 
+  // Function to generate PDF from the schedule
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    // Добавляем шрифт Noto Sans в формате Base64
+    doc.addFileToVFS('NotoSans-Regular.ttf', notoSansFontBase64);  // notoSansFontBase64 — это ваша строка Base64
+    doc.addFont('NotoSans-Regular.ttf', 'NotoSans', 'normal');
+    doc.setFont('NotoSans');
+
+    doc.setFontSize(16);
+    doc.text("Ship Schedule", 14, 16);
+
+    let y = 24; // Starting Y position for text
+
+    // Loop through grouped schedule and add to PDF
+    Object.keys(groupedSchedule).forEach((day) => {
+      doc.setFontSize(12);
+      doc.text(day, 14, y); // Day of the week
+      y += 8;
+
+      groupedSchedule[day].forEach((ship) => {
+        doc.text(`Ship: ${ship.name}`, 14, y);
+        doc.text(`Type: ${ship.type}`, 14, y + 6);
+        doc.text(`Port: ${ship.arrivalPort}`, 14, y + 12);
+        doc.text(`Date and time: ${ship.date}`, 14, y + 18);
+        doc.text(`Service time: ${ship.serviceTime} min`, 14, y + 24);
+        doc.text(`Service end time: ${ship.serviceEndTime}`, 14, y + 30);
+        y += 36;
+      });
+
+      y += 6;
+    });
+
+    // Save the PDF
+    doc.save("schedule.pdf");
+  };
+
+
   return (
       <Box sx={{ width: 1280, margin: "0 auto", padding: 3, textAlign: "center" }}>
         <Divider sx={{ my: 3 }} />
         <Typography variant="h6" component="h3" gutterBottom>
           Редактирование расписания
         </Typography>
-        
+
         <Button variant="contained" size="large" fullWidth onClick={generateSchedule}
         sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}>
                 Сгенерировать расписание
@@ -222,6 +261,10 @@ const SchedulePages = () => {
               </List>
             </Paper>
         )}
+
+        <Button variant="contained" onClick={generatePDF} sx={{ mt: 3 }}>
+          Сохранить расписание в PDF
+        </Button>
       </Box>
   );
 };
