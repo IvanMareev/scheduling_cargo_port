@@ -23,23 +23,21 @@ import dayjs from 'dayjs';
 const PortSchedulePage = () => {
     const [ships, setShips] = useState([]);
     const [newShipName, setNewShipName] = useState('');
-    const [newShipDate, setNewShipDate] = useState(null); // Изменили на null для работы с DateTimePicker
+    const [newShipDate, setNewShipDate] = useState(null);
     const [newShipType, setNewShipType] = useState('');
     const [newArrivalPort, setNewArrivalPort] = useState('');
     const [newServiceTime, setNewServiceTime] = useState('');
+    const [workingPorts, setWorkingPorts] = useState([]);
 
-    // Типы кораблей
-    const shipTypes = ['Грузовой', 'Пассажирский', 'Универсальный', 'Танкер', 'Круизный'];
-
-    // Загрузка данных из localStorage при монтировании компонента
     useEffect(() => {
-        const savedShips = JSON.parse(localStorage.getItem('ships'));
-        if (savedShips) {
-            setShips(savedShips);
-        }
+        const savedShips = JSON.parse(localStorage.getItem('ships')) || [];
+        setShips(savedShips);
+
+        const savedPorts = JSON.parse(localStorage.getItem('ports')) || [];
+        const activePorts = savedPorts.filter(port => port.status === 'работает');
+        setWorkingPorts(activePorts);
     }, []);
 
-    // Сохранение данных в localStorage
     const saveShipsToLocalStorage = (updatedShips) => {
         localStorage.setItem('ships', JSON.stringify(updatedShips));
     };
@@ -49,7 +47,7 @@ const PortSchedulePage = () => {
             const newShip = {
                 id: Date.now(),
                 name: newShipName,
-                date: newShipDate.format('DD.MM.YYYY HH:mm'), // Форматирование даты
+                date: newShipDate.format('DD.MM.YYYY HH:mm'),
                 type: newShipType,
                 arrivalPort: newArrivalPort,
                 serviceTime: newServiceTime
@@ -88,7 +86,6 @@ const PortSchedulePage = () => {
                                 variant="outlined"
                                 size="small"
                             />
-                            {/* Используем DateTimePicker вместо обычного текстового поля для даты */}
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DateTimePicker
                                     label="Дата и время прибытия"
@@ -112,22 +109,34 @@ const PortSchedulePage = () => {
                                 <MenuItem value="">
                                     <em>Выберите тип</em>
                                 </MenuItem>
-                                {shipTypes.map((type) => (
+                                {['Грузовой', 'Пассажирский', 'Универсальный', 'Танкер', 'Круизный'].map((type) => (
                                     <MenuItem key={type} value={type}>{type}</MenuItem>
                                 ))}
                             </Select>
-                            <TextField
+                            <Select
                                 label="Порт прибытия"
                                 value={newArrivalPort}
                                 onChange={(e) => setNewArrivalPort(e.target.value)}
                                 variant="outlined"
                                 size="small"
                                 fullWidth
-                            />
+                            >
+                                <MenuItem value="">
+                                    <em>Выберите порт</em>
+                                </MenuItem>
+                                {workingPorts.map((port) => (
+                                    <MenuItem key={port.id} value={port.name}>{port.name}</MenuItem>
+                                ))}
+                            </Select>
                             <TextField
-                                label="Время обслуживания"
+                                label="Время обслуживания (часы)"
                                 value={newServiceTime}
-                                onChange={(e) => setNewServiceTime(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (/^\d*$/.test(value)) {
+                                        setNewServiceTime(value);
+                                    }
+                                }}
                                 variant="outlined"
                                 size="small"
                                 fullWidth
@@ -151,22 +160,14 @@ const PortSchedulePage = () => {
                         </Typography>
                         <List>
                             {ships.map((ship) => (
-                                <ListItem
-                                    key={ship.id}
-                                    secondaryAction={
-                                        <IconButton
-                                            edge="end"
-                                            aria-label="delete"
-                                            onClick={() => handleDeleteShip(ship.id)}
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    }
-                                >
+                                <ListItem key={ship.id}>
                                     <ListItemText
-                                        primary={`${ship.name}${ship.date ? ', ' + ship.date : ''}`}
+                                        primary={`${ship.name}, ${ship.date}`}
                                         secondary={`Тип: ${ship.type}, Порт прибытия: ${ship.arrivalPort}, Время обслуживания: ${ship.serviceTime}`}
                                     />
+                                    <IconButton edge="end" onClick={() => handleDeleteShip(ship.id)}>
+                                        <DeleteIcon />
+                                    </IconButton>
                                 </ListItem>
                             ))}
                         </List>
