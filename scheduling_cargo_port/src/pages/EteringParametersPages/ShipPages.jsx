@@ -146,6 +146,7 @@ const PortSchedulePage = () => {
                                 startIcon={<AddIcon />}
                                 onClick={handleAddShip}
                                 fullWidth
+                                sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}
                             >
                                 Добавить
                             </Button>
@@ -173,7 +174,8 @@ const PortSchedulePage = () => {
                         </List>
                     </Paper>
                 </Grid>
-                <Button variant="contained" size="large" fullWidth>
+                <Button variant="contained" size="large" fullWidth
+                sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}>
                     Сохранить изменения
                 </Button>
             </Grid>

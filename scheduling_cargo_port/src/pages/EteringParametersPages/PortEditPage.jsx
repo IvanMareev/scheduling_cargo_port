@@ -53,8 +53,8 @@ const PortEditPage = () => {
             <Typography variant="h6" component="h3" gutterBottom>
                 Редактирование списка портов
             </Typography>
-            <Grid container spacing={5} alignItems="flex-start" justifyContent="center">
-                <Grid item xs={5}>
+            <Grid container spacing={1} alignItems="flex-start" justifyContent="center">
+                <Grid item xs={4}>
                     <Paper elevation={3} sx={{ padding: 2 }}>
                         <Typography variant="subtitle1" gutterBottom>
                             Добавить порт
@@ -84,6 +84,7 @@ const PortEditPage = () => {
                             startIcon={<AddIcon />}
                             onClick={handleAddPort}
                             fullWidth
+                            sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}
                         >
                             Добавить порт
                         </Button>
@@ -122,7 +123,8 @@ const PortEditPage = () => {
                         </List>
                     </Paper>
                 </Grid>
-                <Button variant="contained" size="large" fullWidth>
+                <Button variant="contained" size="large" fullWidth
+                sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}>
                                 Сохранить изменения
                             </Button>
             </Grid>

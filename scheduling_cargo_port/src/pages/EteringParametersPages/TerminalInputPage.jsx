@@ -102,6 +102,7 @@ const TerminalInputPage = () => {
                                 startIcon={<AddIcon />}
                                 onClick={handleAddTerminal}
                                 fullWidth
+                                sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}
                             >
                                 Добавить терминал
                             </Button>
@@ -139,7 +140,8 @@ const TerminalInputPage = () => {
                     </Paper>
                 </Grid>
             </Grid>
-            <Button variant="contained" size="large" fullWidth>
+            <Button variant="contained" size="large" fullWidth
+            sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}>
                 Сохранить изменения
             </Button>
         </Box>

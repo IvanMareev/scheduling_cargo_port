@@ -159,90 +159,11 @@ const SchedulePages = () => {
         <Typography variant="h6" component="h3" gutterBottom>
           Редактирование расписания
         </Typography>
-        <Grid container spacing={5} alignItems="flex-start">
-          <Grid item xs={2}>
-            <Paper
-                elevation={3}
-                sx={{
-                  padding: 2,
-                  mb: 5,
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center"
-                }}
-            >
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center", mb: 6 }}>
-                <TextField
-                    label="Название корабля"
-                    value={newShipName}
-                    onChange={(e) => setNewShipName(e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker
-                      label="Дата и время"
-                      value={newShipDate}
-                      onChange={(date) => setNewShipDate(date)}
-                      renderInput={(params) => <TextField {...params} fullWidth />}
-                  />
-                </LocalizationProvider>
-                <TextField
-                    label="Порт прибытия"
-                    value={newShipArrivalPort}
-                    onChange={(e) => setNewShipArrivalPort(e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                />
-                <TextField
-                    label="Время обслуживания (мин)"
-                    value={newShipServiceTime}
-                    onChange={(e) => setNewShipServiceTime(e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                />
-                <Select
-                    label="Тип корабля"
-                    value={newShipType}
-                    onChange={(e) => setNewShipType(e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                >
-                  <MenuItem value="Пассажирский">Пассажирский</MenuItem>
-                  <MenuItem value="Грузовой">Грузовой</MenuItem>
-                </Select>
-
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddShip}
-                    fullWidth
-                >
-                  Добавить корабль
-                </Button>
-              </Box>
-
-              <Divider sx={{ my: 3 }} />
-            </Paper>
-          </Grid>
-
-          <Grid item xs={2}>
-            <Paper elevation={3} sx={{ padding: 2, mb: 3, height: "100%" }}>
-              <Typography variant="subtitle1" gutterBottom>
-                Добавленные корабли
-              </Typography>
-              <Button variant="contained" size="large" fullWidth onClick={generateSchedule}>
+        
+        <Button variant="contained" size="large" fullWidth onClick={generateSchedule}
+        sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}>
                 Сгенерировать расписание
               </Button>
-            </Paper>
-          </Grid>
-        </Grid>
-
         <Typography variant="h6" component="h3" gutterBottom>
           Составленное расписание
         </Typography>
