@@ -5,6 +5,7 @@ import {Box, Button, Typography} from "@mui/material";
 import React from "react";
 import ShipPages from "./pages/EteringParametersPages/ShipPages.jsx";
 import TerminalInputPage from "./pages/EteringParametersPages/TerminalInputPage.jsx";
+import PortEditPage from "./pages/EteringParametersPages/PortEditPage.jsx";
 
 function NavigationButtons() {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ function App() {
                 <Route path="/terminals" element={<TerminalInputPage />} />
                 <Route path="/ship" element={<ShipPages />} />
                 <Route path="/schedule" element={<SchedulePages />} />
-
+                <Route path="/port" element={<PortEditPage />} />
             </Routes>
         </Router>
     );
