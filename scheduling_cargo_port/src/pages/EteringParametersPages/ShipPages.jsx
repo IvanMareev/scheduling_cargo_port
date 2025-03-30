@@ -9,17 +9,27 @@ import {
     Divider,
     TextField,
     IconButton,
-    Paper, Grid, Select, MenuItem
+    Paper,
+    Grid,
+    Select,
+    MenuItem
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { useNavigate } from "react-router";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 
 const PortSchedulePage = () => {
     const [ships, setShips] = useState([]);
     const [newShipName, setNewShipName] = useState('');
-    const [newShipDate, setNewShipDate] = useState('');
-    const [age, setAge] = React.useState('');
+    const [newShipDate, setNewShipDate] = useState(null); // Изменили на null для работы с DateTimePicker
+    const [newShipType, setNewShipType] = useState('');
+    const [newArrivalPort, setNewArrivalPort] = useState('');
+    const [newServiceTime, setNewServiceTime] = useState('');
+
+    // Типы кораблей
+    const shipTypes = ['Грузовой', 'Пассажирский', 'Универсальный', 'Танкер', 'Круизный'];
 
     // Загрузка данных из localStorage при монтировании компонента
     useEffect(() => {
@@ -34,22 +44,24 @@ const PortSchedulePage = () => {
         localStorage.setItem('ships', JSON.stringify(updatedShips));
     };
 
-    const handleChange = (event) => {
-        setAge(event.target.value);
-    };
-
     const handleAddShip = () => {
-        if (newShipName.trim()) {
+        if (newShipName.trim() && newShipType && newArrivalPort.trim() && newServiceTime.trim() && newShipDate) {
             const newShip = {
                 id: Date.now(),
                 name: newShipName,
-                date: newShipDate
+                date: newShipDate.format('DD.MM.YYYY HH:mm'), // Форматирование даты
+                type: newShipType,
+                arrivalPort: newArrivalPort,
+                serviceTime: newServiceTime
             };
             const updatedShips = [...ships, newShip];
             setShips(updatedShips);
             saveShipsToLocalStorage(updatedShips);
             setNewShipName('');
-            setNewShipDate('');
+            setNewShipDate(null);
+            setNewShipType('');
+            setNewArrivalPort('');
+            setNewServiceTime('');
         }
     };
 
@@ -76,33 +88,59 @@ const PortSchedulePage = () => {
                                 variant="outlined"
                                 size="small"
                             />
-                            <TextField
-                                label="Дата (дд.мм.гг)"
-                                value={newShipDate}
-                                onChange={(e) => setNewShipDate(e.target.value)}
+                            {/* Используем DateTimePicker вместо обычного текстового поля для даты */}
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                    label="Дата и время прибытия"
+                                    value={newShipDate}
+                                    onChange={(date) => setNewShipDate(date)}
+                                    renderInput={(params) => <TextField {...params} />}
+                                    inputFormat="DD.MM.YYYY HH:mm"
+                                    disableFuture
+                                    showTodayButton
+                                    size="small"
+                                />
+                            </LocalizationProvider>
+                            <Select
+                                label="Тип корабля"
+                                value={newShipType}
+                                onChange={(e) => setNewShipType(e.target.value)}
                                 variant="outlined"
                                 size="small"
-                            />
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={age}
-                                label="Age"
-                                onChange={handleChange}
+                                fullWidth
                             >
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                <MenuItem value="">
+                                    <em>Выберите тип</em>
+                                </MenuItem>
+                                {shipTypes.map((type) => (
+                                    <MenuItem key={type} value={type}>{type}</MenuItem>
+                                ))}
                             </Select>
+                            <TextField
+                                label="Порт прибытия"
+                                value={newArrivalPort}
+                                onChange={(e) => setNewArrivalPort(e.target.value)}
+                                variant="outlined"
+                                size="small"
+                                fullWidth
+                            />
+                            <TextField
+                                label="Время обслуживания"
+                                value={newServiceTime}
+                                onChange={(e) => setNewServiceTime(e.target.value)}
+                                variant="outlined"
+                                size="small"
+                                fullWidth
+                            />
                             <Button
                                 variant="contained"
                                 startIcon={<AddIcon />}
                                 onClick={handleAddShip}
+                                fullWidth
                             >
                                 Добавить
                             </Button>
                         </Box>
-
                         <Divider sx={{ my: 3 }} />
                     </Paper>
                 </Grid>
@@ -127,6 +165,7 @@ const PortSchedulePage = () => {
                                 >
                                     <ListItemText
                                         primary={`${ship.name}${ship.date ? ', ' + ship.date : ''}`}
+                                        secondary={`Тип: ${ship.type}, Порт прибытия: ${ship.arrivalPort}, Время обслуживания: ${ship.serviceTime}`}
                                     />
                                 </ListItem>
                             ))}
