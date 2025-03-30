@@ -70,7 +70,7 @@ const TerminalInputPage = () => {
             <Typography variant="h6" component="h3" gutterBottom>
                 Редактирование списка терминалов
             </Typography>
-            <Grid container spacing={5} alignItems="flex-start">
+            <Grid container spacing={5} alignItems="flex-start" justifyContent="center">
                 <Grid item xs={2}>
                     <Paper elevation={3} sx={{ padding: 2, mb: 5, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Box sx={{ display: 'flex', flexDirection: "column", gap: 2, alignItems: 'center', mb: 6 }}>
