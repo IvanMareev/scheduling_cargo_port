@@ -53,7 +53,7 @@ const PortSchedulePage = () => {
     };
 
     return (
-        <Box sx={{margin: '0 auto', padding: 3}}>
+        <Box sx={{width: 1280, margin: '0 auto', padding: 3, textAlign: 'center'}}>
             <Divider sx={{my: 3}}/>
             <Typography variant="h6" component="h3" gutterBottom>
                 Редактирование списка кораблей
