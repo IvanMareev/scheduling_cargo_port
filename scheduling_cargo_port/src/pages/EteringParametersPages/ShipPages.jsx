@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -13,23 +13,26 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import {useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 
 const PortSchedulePage = () => {
-    const [ships, setShips] = useState([
-        {id: 1, name: 'Аврора', date: '12.04.12'},
-        {id: 2, name: 'Владивосток Самара', date: ''},
-        {id: 3, name: 'Аврора', date: '12.04.12'},
-        {id: 4, name: 'Владивосток Самара', date: ''},
-        {id: 5, name: 'Аврора', date: '12.04.12'},
-        {id: 6, name: 'Владивосток Самара', date: ''},
-        {id: 7, name: 'Аврора', date: '12.04.12'},
-        {id: 8, name: 'Владивосток Самара', date: ''},
-    ]);
-
+    const [ships, setShips] = useState([]);
     const [newShipName, setNewShipName] = useState('');
     const [newShipDate, setNewShipDate] = useState('');
     const [age, setAge] = React.useState('');
+
+    // Загрузка данных из localStorage при монтировании компонента
+    useEffect(() => {
+        const savedShips = JSON.parse(localStorage.getItem('ships'));
+        if (savedShips) {
+            setShips(savedShips);
+        }
+    }, []);
+
+    // Сохранение данных в localStorage
+    const saveShipsToLocalStorage = (updatedShips) => {
+        localStorage.setItem('ships', JSON.stringify(updatedShips));
+    };
 
     const handleChange = (event) => {
         setAge(event.target.value);
@@ -42,35 +45,30 @@ const PortSchedulePage = () => {
                 name: newShipName,
                 date: newShipDate
             };
-            setShips([...ships, newShip]);
+            const updatedShips = [...ships, newShip];
+            setShips(updatedShips);
+            saveShipsToLocalStorage(updatedShips);
             setNewShipName('');
             setNewShipDate('');
         }
     };
 
     const handleDeleteShip = (id) => {
-        setShips(ships.filter(ship => ship.id !== id));
+        const updatedShips = ships.filter(ship => ship.id !== id);
+        setShips(updatedShips);
+        saveShipsToLocalStorage(updatedShips);
     };
 
     return (
-        <Box sx={{width: 1280, margin: '0 auto', padding: 3, textAlign: 'center'}}>
-<<<<<<< HEAD:scheduling_cargo_port/src/pages/MainPages/MainPages.jsx
-            <Typography variant="h4" component="h1" gutterBottom>
-                Создание расписания порта
-            </Typography>
-
-
-
-=======
->>>>>>> 06c49c88f6006cae6e939dabd0114d7f6e275355:scheduling_cargo_port/src/pages/EteringParametersPages/ShipPages.jsx
-            <Divider sx={{my: 3}}/>
+        <Box sx={{ width: 1280, margin: '0 auto', padding: 3, textAlign: 'center' }}>
+            <Divider sx={{ my: 3 }} />
             <Typography variant="h6" component="h3" gutterBottom>
                 Редактирование списка кораблей
             </Typography>
-            <Grid container spacing={5} alignItems="flex" justifyContent="center">
-                <Grid item xs={12} sm={6} md={4}>
+            <Grid container spacing={5} alignItems="flex-start">
+                <Grid item xs={2}>
                     <Paper elevation={3} sx={{ padding: 2, mb: 5, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex',flexDirection:"column" ,gap: 2, alignItems: 'center', mb: 6 }}>
+                        <Box sx={{ display: 'flex', flexDirection: "column", gap: 2, alignItems: 'center', mb: 6 }}>
                             <TextField
                                 label="Название корабля"
                                 value={newShipName}
@@ -106,12 +104,10 @@ const PortSchedulePage = () => {
                         </Box>
 
                         <Divider sx={{ my: 3 }} />
-
-
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <Paper elevation={3} sx={{ padding: 2, mb: 3, height: '100%'}}>
+                <Grid item xs={2}>
+                    <Paper elevation={3} sx={{ padding: 2, mb: 3, height: '100%' }}>
                         <Typography variant="subtitle1" gutterBottom>
                             Добавленные корабли
                         </Typography>
@@ -140,13 +136,7 @@ const PortSchedulePage = () => {
                 <Button variant="contained" size="large" fullWidth>
                     Сохранить изменения
                 </Button>
-
-
             </Grid>
-
-
-
-
         </Box>
     );
 };

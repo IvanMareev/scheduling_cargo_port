@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -18,11 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 const TerminalInputPage = () => {
-    const [terminals, setTerminals] = useState([
-        {id: 1, name: 'Терминал А', type: 'грузовой'},
-        {id: 2, name: 'Терминал B', type: 'пассажирский'},
-    ]);
-
+    const [terminals, setTerminals] = useState([]);
     const [newTerminalName, setNewTerminalName] = useState('');
     const [newTerminalType, setNewTerminalType] = useState('');
 
@@ -34,6 +30,19 @@ const TerminalInputPage = () => {
         'контейнерный'
     ];
 
+    // Загрузка данных из localStorage при монтировании компонента
+    useEffect(() => {
+        const savedTerminals = JSON.parse(localStorage.getItem('terminals'));
+        if (savedTerminals) {
+            setTerminals(savedTerminals);
+        }
+    }, []);
+
+    // Сохранение данных в localStorage
+    const saveTerminalsToLocalStorage = (updatedTerminals) => {
+        localStorage.setItem('terminals', JSON.stringify(updatedTerminals));
+    };
+
     const handleAddTerminal = () => {
         if (newTerminalName.trim() && newTerminalType) {
             const newTerminal = {
@@ -41,26 +50,30 @@ const TerminalInputPage = () => {
                 name: newTerminalName,
                 type: newTerminalType
             };
-            setTerminals([...terminals, newTerminal]);
+            const updatedTerminals = [...terminals, newTerminal];
+            setTerminals(updatedTerminals);
+            saveTerminalsToLocalStorage(updatedTerminals);
             setNewTerminalName('');
             setNewTerminalType('');
         }
     };
 
     const handleDeleteTerminal = (id) => {
-        setTerminals(terminals.filter(terminal => terminal.id !== id));
+        const updatedTerminals = terminals.filter(terminal => terminal.id !== id);
+        setTerminals(updatedTerminals);
+        saveTerminalsToLocalStorage(updatedTerminals);
     };
 
     return (
-        <Box sx={{margin: '0 auto', padding: 3}}>
-            <Divider sx={{my: 3}}/>
+        <Box sx={{ width: 1280, margin: '0 auto', padding: 3, textAlign: 'center' }}>
+            <Divider sx={{ my: 3 }} />
             <Typography variant="h6" component="h3" gutterBottom>
                 Редактирование списка терминалов
             </Typography>
             <Grid container spacing={5} alignItems="flex-start">
                 <Grid item xs={2}>
                     <Paper elevation={3} sx={{ padding: 2, mb: 5, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex', flexDirection:"column", gap: 2, alignItems: 'center', mb: 6 }}>
+                        <Box sx={{ display: 'flex', flexDirection: "column", gap: 2, alignItems: 'center', mb: 6 }}>
                             <TextField
                                 label="Название терминала"
                                 value={newTerminalName}
@@ -98,7 +111,7 @@ const TerminalInputPage = () => {
                     </Paper>
                 </Grid>
                 <Grid item xs={2}>
-                    <Paper elevation={3} sx={{ padding: 2, mb: 3, height: '100%'}}>
+                    <Paper elevation={3} sx={{ padding: 2, mb: 3, height: '100%' }}>
                         <Typography variant="subtitle1" gutterBottom>
                             Список терминалов
                         </Typography>

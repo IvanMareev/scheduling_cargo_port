@@ -27,7 +27,7 @@ function App() {
             </Typography>
             <NavigationButtons />
             <Routes>
-                <Route path="/port" element={<TerminalInputPage />} />
+                <Route path="/terminals" element={<TerminalInputPage />} />
                 <Route path="/ship" element={<ShipPages />} />
                 <Route path="/schedule" element={<SchedulePages />} />
 
