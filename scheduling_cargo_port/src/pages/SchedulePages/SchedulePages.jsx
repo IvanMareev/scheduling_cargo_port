@@ -3,14 +3,21 @@ import {
   Box,
   Typography,
   Button,
-  List,
-  ListItem,
-  ListItemText,
+  Paper,
+  Grid,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Divider,
   Select,
   MenuItem,
-  Paper,
-  Grid, TextField
+  List,
+  ListItem,
+  ListItemText
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
@@ -46,7 +53,7 @@ const SchedulePages = () => {
         date: newShipDate.format("DD.MM.YYYY HH:mm"),
         type: newShipType,
         arrivalPort: newShipArrivalPort,
-        serviceTime: newShipServiceTime
+        serviceTime: newShipServiceTime,
       };
 
       // Check if there is a terminal available based on the type of ship
@@ -60,11 +67,19 @@ const SchedulePages = () => {
         newShip.terminal = assignedTerminal.name;
 
         setShips([...ships, newShip]);
-
         // Add new ship to localStorage
         localStorage.setItem("ships", JSON.stringify([...ships, newShip]));
       } else {
-        setErrors([...errors, `No available terminal for ship type: ${newShipType}`]);
+        // If no terminal is available, add downtime and log a comment
+        const downtime = 60;  // Assuming 1 hour downtime
+        newShip.serviceTime = (parseInt(newShipServiceTime) + downtime).toString();
+        setErrors([...errors, `No available terminal for ship type: ${newShipType}. Added ${downtime} minutes of downtime.`]);
+
+        // You can assign a dummy terminal or leave it undefined
+        newShip.terminal = "No terminal assigned (downtime added)";
+
+        setShips([...ships, newShip]);
+        localStorage.setItem("ships", JSON.stringify([...ships, newShip]));
       }
 
       // Reset form fields
@@ -122,6 +137,21 @@ const SchedulePages = () => {
     setSchedule(updatedSchedule);
     setErrors(newErrors);
   };
+
+  // Function to group ships by the day of the week
+  const groupByDayOfWeek = () => {
+    return schedule.reduce((acc, ship) => {
+      const dayOfWeek = dayjs(ship.date).format("dddd"); // Get day of the week
+      if (!acc[dayOfWeek]) {
+        acc[dayOfWeek] = [];
+      }
+      acc[dayOfWeek].push(ship);
+      return acc;
+    }, {});
+  };
+
+  // Group ships by day of the week
+  const groupedSchedule = groupByDayOfWeek();
 
   return (
       <Box sx={{ width: 1280, margin: "0 auto", padding: 3, textAlign: "center" }}>
@@ -206,16 +236,6 @@ const SchedulePages = () => {
               <Typography variant="subtitle1" gutterBottom>
                 Добавленные корабли
               </Typography>
-              <List>
-                {ships.map((ship) => (
-                    <ListItem key={ship.id}>
-                      <ListItemText
-                          primary={`${ship.name} (${ship.date})`}
-                          secondary={`Тип: ${ship.type}, Порт: ${ship.arrivalPort}, Время обслуживания: ${ship.serviceTime} мин`}
-                      />
-                    </ListItem>
-                ))}
-              </List>
               <Button variant="contained" size="large" fullWidth onClick={generateSchedule}>
                 Сгенерировать расписание
               </Button>
@@ -226,27 +246,61 @@ const SchedulePages = () => {
         <Typography variant="h6" component="h3" gutterBottom>
           Составленное расписание
         </Typography>
-        <List>
-          {schedule.map((ship) => (
-              <ListItem key={ship.id}>
-                <ListItemText
-                    primary={`${ship.name} (${ship.date})`}
-                    secondary={`Тип: ${ship.type}, Порт: ${ship.arrivalPort}, Время обслуживания: ${ship.serviceTime} мин, Завершение обслуживания: ${ship.serviceEndTime}`}
-                />
-              </ListItem>
-          ))}
-        </List>
 
-        <Typography variant="h6" component="h3" gutterBottom>
-          Ошибки
-        </Typography>
-        <List>
-          {errors.map((error, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={`Ошибка: ${error}`} />
-              </ListItem>
-          ))}
-        </List>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>День</TableCell>
+                <TableCell>Название корабля</TableCell>
+                <TableCell>Тип</TableCell>
+                <TableCell>Порт</TableCell>
+                <TableCell>Дата и время</TableCell>
+                <TableCell>Время обслуживания</TableCell>
+                <TableCell>Завершение обслуживания</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Object.keys(groupedSchedule).map((day) => (
+                  <React.Fragment key={day}>
+                    <TableRow>
+                      <TableCell colSpan={7} sx={{ fontWeight: "bold" }}>
+                        {day}
+                      </TableCell>
+                    </TableRow>
+                    {groupedSchedule[day].map((ship) => (
+                        <TableRow key={ship.id}>
+                          <TableCell>{day}</TableCell>
+                          <TableCell>{ship.name}</TableCell>
+                          <TableCell>{ship.type}</TableCell>
+                          <TableCell>{ship.arrivalPort}</TableCell>
+                          <TableCell>{ship.date}</TableCell>
+                          <TableCell>{ship.serviceTime} мин</TableCell>
+                          <TableCell>{ship.serviceEndTime}</TableCell>
+                        </TableRow>
+                    ))}
+                  </React.Fragment>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Divider sx={{ my: 3 }} />
+
+        {errors.length > 0 && (
+            <Paper elevation={3} sx={{ padding: 2 }}>
+              <Typography variant="subtitle1" color="error" gutterBottom>
+                Ошибки:
+              </Typography>
+              <List>
+                {errors.map((error, index) => (
+                    <ListItem key={index}>
+                      <ListItemText primary={error} />
+                    </ListItem>
+                ))}
+              </List>
+            </Paper>
+        )}
       </Box>
   );
 };

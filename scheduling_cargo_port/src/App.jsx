@@ -23,7 +23,9 @@ function NavigationButtons() {
 function App() {
     return (
         <Router>
-            <Typography variant="h4" component="h1" gutterBottom>
+
+            <Typography variant="h4" component="h1" gutterBottom textAlign={'center'}>
+                <br/>
                 Создание расписания порта
             </Typography>
             <NavigationButtons />
