@@ -69,6 +69,14 @@ const PortSchedulePage = () => {
         saveShipsToLocalStorage(updatedShips);
     };
 
+    const groupedShips = ships.reduce((acc, ship) => {
+        if (!acc[ship.arrivalPort]) {
+            acc[ship.arrivalPort] = [];
+        }
+        acc[ship.arrivalPort].push(ship);
+        return acc;
+    }, {});
+
     return (
         <Box sx={{ width: 1280, margin: '0 auto', padding: 3, textAlign: 'center' }} >
             <Divider sx={{ my: 3 }} />
@@ -76,108 +84,89 @@ const PortSchedulePage = () => {
                 Редактирование списка кораблей
             </Typography>
             <Grid container spacing={5} alignItems="flex-start" justifyContent="center">
-                <Grid item xs={2}>
-                    <Paper elevation={3} sx={{ padding: 2, mb: 5, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex', flexDirection: "column", gap: 2, alignItems: 'center', mb: 6 }}>
-                            <TextField
-                                label="Название корабля"
-                                value={newShipName}
-                                onChange={(e) => setNewShipName(e.target.value)}
-                                variant="outlined"
+                <Grid item xs={3}>
+                    <Paper elevation={3} sx={{ padding: 2, mb: 5 }}>
+                        <Typography variant="subtitle1">Название корабля</Typography>
+                        <TextField
+                            fullWidth
+                            label="Название корабля"
+                            size="small"
+                            value={newShipName}
+                            onChange={(e) => setNewShipName(e.target.value)}
+                        />
+                        <Typography variant="subtitle1" sx={{ mt: 2 }}>Дата и время прибытия</Typography>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateTimePicker
+                                value={newShipDate}
                                 size="small"
+                                fullWidth
+                                onChange={(date) => setNewShipDate(date)}
+                                renderInput={(params) => <TextField fullWidth {...params} />}
                             />
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateTimePicker
-                                    label="Дата и время прибытия"
-                                    value={newShipDate}
-                                    onChange={(date) => setNewShipDate(date)}
-                                    renderInput={(params) => <TextField {...params} />}
-                                    inputFormat="DD.MM.YYYY HH:mm"
-                                    disableFuture
-                                    showTodayButton
-                                    size="small"
-                                />
-                            </LocalizationProvider>
-                            <Select
-                                label="Тип корабля"
-                                value={newShipType}
-                                onChange={(e) => setNewShipType(e.target.value)}
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                            >
-                                <MenuItem value="">
-                                    <em>Выберите тип</em>
-                                </MenuItem>
-                                {['Грузовой', 'Пассажирский', 'Универсальный', 'Танкер', 'Круизный'].map((type) => (
-                                    <MenuItem key={type} value={type}>{type}</MenuItem>
-                                ))}
-                            </Select>
-                            <Select
-                                label="Порт прибытия"
-                                value={newArrivalPort}
-                                onChange={(e) => setNewArrivalPort(e.target.value)}
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                            >
-                                <MenuItem value="">
-                                    <em>Выберите порт</em>
-                                </MenuItem>
-                                {workingPorts.map((port) => (
-                                    <MenuItem key={port.id} value={port.name}>{port.name}</MenuItem>
-                                ))}
-                            </Select>
-                            <TextField
-                                label="Время обслуживания (часы)"
-                                value={newServiceTime}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (/^\d*$/.test(value)) {
-                                        setNewServiceTime(value);
-                                    }
-                                }}
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                            />
-                            <Button
-                                variant="contained"
-                                startIcon={<AddIcon />}
-                                onClick={handleAddShip}
-                                fullWidth
-                                sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}
-                            >
-                                Добавить
-                            </Button>
-                        </Box>
-                        <Divider sx={{ my: 3 }} />
-                    </Paper>
-                </Grid>
-                <Grid item xs={2}>
-                    <Paper elevation={3} sx={{ padding: 2, mb: 3, height: '100%' }}>
-                        <Typography variant="subtitle1" gutterBottom>
-                            Добавленные корабли
-                        </Typography>
-                        <List>
-                            {ships.map((ship) => (
-                                <ListItem key={ship.id}>
-                                    <ListItemText
-                                        primary={`${ship.name}, ${ship.date}`}
-                                        secondary={`Тип: ${ship.type}, Порт прибытия: ${ship.arrivalPort}, Время обслуживания: ${ship.serviceTime}`}
-                                    />
-                                    <IconButton edge="end" onClick={() => handleDeleteShip(ship.id)}>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </ListItem>
+                        </LocalizationProvider>
+                        <Typography variant="subtitle1" sx={{ mt: 2 }}>Тип корабля</Typography>
+                        <Select
+                            fullWidth
+                            label="Тип корабля"
+                            size="small"
+                            value={newShipType}
+                            onChange={(e) => setNewShipType(e.target.value)}
+                        >
+                            <MenuItem value="Грузовой">Грузовой</MenuItem>
+                            <MenuItem value="Пассажирский">Пассажирский</MenuItem>
+                            <MenuItem value="Универсальный">Универсальный</MenuItem>
+                            <MenuItem value="Танкер">Танкер</MenuItem>
+                            <MenuItem value="Круизный">Круизный</MenuItem>
+                        </Select>
+                        <Typography variant="subtitle1" sx={{ mt: 2 }}>Порт прибытия</Typography>
+                        <Select
+                            fullWidth
+                            label="Порт прибытия"
+                            size="small"
+                            value={newArrivalPort}
+                            onChange={(e) => setNewArrivalPort(e.target.value)}
+                        >
+                            {workingPorts.map((port) => (
+                                <MenuItem key={port.id} value={port.name}>{port.name}</MenuItem>
                             ))}
-                        </List>
+                        </Select>
+                        <Typography variant="subtitle1" sx={{ mt: 2 }}>Время обслуживания (часы)</Typography>
+                        <TextField
+                            fullWidth
+                            label="Время обслуживания (часы)"
+                            size="small"
+                            value={newServiceTime}
+                            onChange={(e) => setNewServiceTime(e.target.value)}
+                        />
+                        <Button variant="contained" startIcon={<AddIcon />} fullWidth sx={{ mt: 2 }} onClick={handleAddShip}>
+                            Добавить
+                        </Button>
                     </Paper>
                 </Grid>
-                <Button variant="contained" size="large" fullWidth
-                sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}>
-                    Сохранить изменения
-                </Button>
+                <Grid item xs={4}>
+                    <Paper elevation={3} sx={{ padding: 2, mb: 3 }}>
+                        <Typography variant="subtitle1">Добавленные корабли</Typography>
+                        {Object.entries(groupedShips).map(([port, ships]) => (
+                            <Box key={port} sx={{ mt: 2 }}>
+                                <Typography variant="h6">{port}</Typography>
+                                <List>
+                                    {ships.map((ship) => (
+                                        <ListItem key={ship.id}>
+                                            <ListItemText
+                                                primary={`${ship.name}, ${ship.date}`}
+                                                secondary={`Тип: ${ship.type}, Время обслуживания: ${ship.serviceTime}ч`}
+                                            />
+                                            <IconButton onClick={() => handleDeleteShip(ship.id)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Box>
+                        ))}
+                    </Paper>
+                </Grid>
+                
             </Grid>
         </Box>
     );
