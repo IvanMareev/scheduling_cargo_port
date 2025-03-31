@@ -72,7 +72,7 @@ const SchedulePages = () => {
             // Фильтруем терминалы, учитывая, что если терминал универсальный, то он подходит для всех типов кораблей
             let availableTerminal = filteredTerminals.find((terminal) => {
                 // Проверяем, что терминал подходит по типу или он универсальный
-                const isTerminalCompatible = terminal.type === "универсальный" || terminal.type === ship.type;
+                const isTerminalCompatible = terminal.type === "Универсальный" || terminal.type === ship.type;
                 // Проверяем, что терминал свободен
                 const isTerminalFree = !terminalAssignments.has(terminal.name) ||
                     !terminalAssignments.get(terminal.name).some((scheduledShip) => isOverlapping(scheduledShip, ship));
@@ -85,7 +85,7 @@ const SchedulePages = () => {
             while (!availableTerminal && shiftAttempts < 24) { // Ограничим сдвиги до 24 часов (или другого числа)
                 ship = shiftArrivalTime(ship); // Сдвиг времени
                 availableTerminal = filteredTerminals.find((terminal) => {
-                    const isTerminalCompatible = terminal.type === "универсальный" || terminal.type === ship.type;
+                    const isTerminalCompatible = terminal.type === "Универсальный" || terminal.type === ship.type;
                     const isTerminalFree = !terminalAssignments.has(terminal.name) ||
                         !terminalAssignments.get(terminal.name).some((scheduledShip) => isOverlapping(scheduledShip, ship));
                     return isTerminalCompatible && isTerminalFree;
