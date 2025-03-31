@@ -14,7 +14,7 @@ import {
     Select, 
     MenuItem
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 const PortEditPage = () => {
@@ -43,6 +43,12 @@ const PortEditPage = () => {
             savePortsToLocalStorage(updatedPorts);
             setNewPortName('');
         }
+    };
+
+    const handleDeletePort = (id) => {
+        const updatedPorts = ports.filter(port => port.id !== id);
+        setPorts(updatedPorts);
+        savePortsToLocalStorage(updatedPorts);
     };
 
     const workingPorts = ports.filter(port => port.status === 'работает');
@@ -97,11 +103,12 @@ const PortEditPage = () => {
                         </Typography>
                         <List>
                             {workingPorts.map((port) => (
-                                <ListItem key={port.id}>
-                                    <ListItemText primary={port.name} secondary="Работает" />
-                                    <IconButton edge="end">
-                                        <EditIcon />
+                                <ListItem key={port.id} secondaryAction={
+                                    <IconButton edge="end" onClick={() => handleDeletePort(port.id)}>
+                                        <DeleteIcon />
                                     </IconButton>
+                                }>
+                                    <ListItemText primary={port.name} secondary="Работает" />
                                 </ListItem>
                             ))}
                             {inactivePorts.length > 0 && (
@@ -111,11 +118,12 @@ const PortEditPage = () => {
                                         Терминалы не введенные в эксплуатацию
                                     </Typography>
                                     {inactivePorts.map((port) => (
-                                        <ListItem key={port.id}>
-                                            <ListItemText primary={port.name} secondary="Не работает" />
-                                            <IconButton edge="end">
-                                                <EditIcon />
+                                        <ListItem key={port.id} secondaryAction={
+                                            <IconButton edge="end" onClick={() => handleDeletePort(port.id)}>
+                                                <DeleteIcon />
                                             </IconButton>
+                                        }>
+                                            <ListItemText primary={port.name} secondary="Не работает" />
                                         </ListItem>
                                     ))}
                                 </>
@@ -125,10 +133,9 @@ const PortEditPage = () => {
                 </Grid>
                 <Button variant="contained" size="large" fullWidth
                 sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}>
-                                Сохранить изменения
-                            </Button>
+                    Сохранить изменения
+                </Button>
             </Grid>
-            
         </Box>
     );
 };
