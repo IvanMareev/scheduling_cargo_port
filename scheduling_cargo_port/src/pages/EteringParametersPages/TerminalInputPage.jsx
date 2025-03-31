@@ -19,8 +19,10 @@ import AddIcon from '@mui/icons-material/Add';
 
 const TerminalInputPage = () => {
     const [terminals, setTerminals] = useState([]);
+    const [ports, setPorts] = useState([]); // Добавляем состояние для портов
     const [newTerminalName, setNewTerminalName] = useState('');
     const [newTerminalType, setNewTerminalType] = useState('');
+    const [selectedPort, setSelectedPort] = useState(''); // Храним выбранный порт
 
     const terminalTypes = [
         'грузовой',
@@ -30,31 +32,32 @@ const TerminalInputPage = () => {
         'контейнерный'
     ];
 
-    // Загрузка данных из localStorage при монтировании компонента
     useEffect(() => {
-        const savedTerminals = JSON.parse(localStorage.getItem('terminals'));
-        if (savedTerminals) {
-            setTerminals(savedTerminals);
-        }
+        const savedTerminals = JSON.parse(localStorage.getItem('terminals')) || [];
+        setTerminals(savedTerminals);
+
+        const savedPorts = JSON.parse(localStorage.getItem('ports')) || [];
+        setPorts(savedPorts);
     }, []);
 
-    // Сохранение данных в localStorage
     const saveTerminalsToLocalStorage = (updatedTerminals) => {
         localStorage.setItem('terminals', JSON.stringify(updatedTerminals));
     };
 
     const handleAddTerminal = () => {
-        if (newTerminalName.trim() && newTerminalType) {
+        if (newTerminalName.trim() && newTerminalType && selectedPort) {
             const newTerminal = {
                 id: Date.now(),
                 name: newTerminalName,
-                type: newTerminalType
+                type: newTerminalType,
+                port: selectedPort // Сохраняем привязку к порту
             };
             const updatedTerminals = [...terminals, newTerminal];
             setTerminals(updatedTerminals);
             saveTerminalsToLocalStorage(updatedTerminals);
             setNewTerminalName('');
             setNewTerminalType('');
+            setSelectedPort('');
         }
     };
 
@@ -71,48 +74,63 @@ const TerminalInputPage = () => {
                 Редактирование списка терминалов
             </Typography>
             <Grid container spacing={5} alignItems="flex-start" justifyContent="center">
-                <Grid item xs={2}>
-                    <Paper elevation={3} sx={{ padding: 2, mb: 5, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex', flexDirection: "column", gap: 2, alignItems: 'center', mb: 6 }}>
-                            <TextField
-                                label="Название терминала"
-                                value={newTerminalName}
-                                onChange={(e) => setNewTerminalName(e.target.value)}
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                            />
-                            <Select
-                                label="Тип терминала"
-                                value={newTerminalType}
-                                onChange={(e) => setNewTerminalType(e.target.value)}
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                            >
-                                <MenuItem value="">
-                                    <em>Выберите тип</em>
-                                </MenuItem>
-                                {terminalTypes.map((type) => (
-                                    <MenuItem key={type} value={type}>{type}</MenuItem>
-                                ))}
-                            </Select>
-                            <Button
-                                variant="contained"
-                                startIcon={<AddIcon />}
-                                onClick={handleAddTerminal}
-                                fullWidth
-                                sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}
-                            >
-                                Добавить терминал
-                            </Button>
-                        </Box>
-
-                        <Divider sx={{ my: 3 }} />
+                <Grid item xs={3}>
+                    <Paper elevation={3} sx={{ padding: 2, mb: 5 }}>
+                        <Typography variant="subtitle1" gutterBottom>
+                            Добавить терминал
+                        </Typography>
+                        <TextField
+                            label="Название терминала"
+                            value={newTerminalName}
+                            onChange={(e) => setNewTerminalName(e.target.value)}
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            sx={{ mb: 2 }}
+                        />
+                        <Select
+                            value={newTerminalType}
+                            onChange={(e) => setNewTerminalType(e.target.value)}
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            sx={{ mb: 2 }}
+                        >
+                            <MenuItem value="">
+                                <em>Выберите тип</em>
+                            </MenuItem>
+                            {terminalTypes.map((type) => (
+                                <MenuItem key={type} value={type}>{type}</MenuItem>
+                            ))}
+                        </Select>
+                        <Select
+                            value={selectedPort}
+                            onChange={(e) => setSelectedPort(e.target.value)}
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            sx={{ mb: 2 }}
+                        >
+                            <MenuItem value="">
+                                <em>Выберите порт</em>
+                            </MenuItem>
+                            {ports.map((port) => (
+                                <MenuItem key={port.id} value={port.name}>{port.name}</MenuItem>
+                            ))}
+                        </Select>
+                        <Button
+                            variant="contained"
+                            startIcon={<AddIcon />}
+                            onClick={handleAddTerminal}
+                            fullWidth
+                            sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}
+                        >
+                            Добавить терминал
+                        </Button>
                     </Paper>
                 </Grid>
-                <Grid item xs={2}>
-                    <Paper elevation={3} sx={{ padding: 2, mb: 3, height: '100%' }}>
+                <Grid item xs={5}>
+                    <Paper elevation={3} sx={{ padding: 2 }}>
                         <Typography variant="subtitle1" gutterBottom>
                             Список терминалов
                         </Typography>
@@ -131,8 +149,8 @@ const TerminalInputPage = () => {
                                     }
                                 >
                                     <ListItemText
-                                        primary={`${terminal.name}`}
-                                        secondary={`Тип: ${terminal.type}`}
+                                        primary={terminal.name}
+                                        secondary={`Тип: ${terminal.type} | Порт: ${terminal.port}`}
                                     />
                                 </ListItem>
                             ))}
@@ -140,8 +158,12 @@ const TerminalInputPage = () => {
                     </Paper>
                 </Grid>
             </Grid>
-            <Button variant="contained" size="large" fullWidth
-            sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}>
+            <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                sx={{ backgroundColor: '#2C2C2C', '&:hover': { backgroundColor: '#1E1E1E' } }}
+            >
                 Сохранить изменения
             </Button>
         </Box>
