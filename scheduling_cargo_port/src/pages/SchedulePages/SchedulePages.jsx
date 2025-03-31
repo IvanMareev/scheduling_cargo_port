@@ -138,27 +138,56 @@ const SchedulePages = () => {
 
         let y = 24;
 
+        // Create a table with headers
+        const headers = ["Ship Name", "Type", "Arrival Port", "Terminal", "Date and Time", "Service Time (min)", "Service End Time"];
+        const headerHeight = 10;
+        const rowHeight = 8;
+        const columnWidths = [40, 30, 40, 40, 50, 30, 40];
+
+        // Draw table headers
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        headers.forEach((header, i) => {
+            doc.rect(14 + i * columnWidths[i], y, columnWidths[i], headerHeight);  // Draw header cells
+            doc.text(header, 14 + i * columnWidths[i] + 2, y + 6);  // Add header text
+        });
+        y += headerHeight;
+
+        // Reset font for content rows
+        doc.setFont("helvetica", "normal");
+
         Object.keys(groupedSchedule).forEach((day) => {
             doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
             doc.text(day, 14, y);
             y += 8;
 
             groupedSchedule[day].forEach((ship) => {
-                doc.text(`Ship: ${ship.name}`, 14, y);
-                doc.text(`Type: ${ship.type}`, 14, y + 6);
-                doc.text(`Port: ${ship.arrivalPort}`, 14, y + 12);
-                doc.text(`Terminal: ${ship.terminal}`, 14, y + 18);
-                doc.text(`Date and time: ${ship.date}`, 14, y + 24);
-                doc.text(`Service time: ${ship.serviceTime} min`, 14, y + 30);
-                doc.text(`Service end time: ${ship.serviceEndTime}`, 14, y + 36);
-                y += 42;
+                // Draw each row with ship details
+                const rowData = [
+                    ship.name,
+                    ship.type,
+                    ship.arrivalPort,
+                    ship.terminal,
+                    ship.date,
+                    ship.serviceTime,
+                    ship.serviceEndTime
+                ];
+
+                rowData.forEach((data, i) => {
+                    doc.rect(14 + i * columnWidths[i], y, columnWidths[i], rowHeight);  // Draw cells
+                    doc.text(data, 14 + i * columnWidths[i] + 2, y + 5);  // Add text to cells
+                });
+                y += rowHeight;
             });
 
-            y += 6;
+            y += 6; // Add space between days
         });
 
+        // Save PDF
         doc.save("schedule.pdf");
     };
+
 
     return (
         <Box sx={{width: 1280, margin: "0 auto", padding: 3, textAlign: "center"}}>
