@@ -69,23 +69,27 @@ const SchedulePages = () => {
         const filteredTerminals = terminals ? terminals.filter((terminal) => terminal.port === selectedPort) : terminals;
 
         filteredShips.forEach((ship) => {
-            // Проверка на наличие доступного терминала
-            let availableTerminal = filteredTerminals.find(
-                (terminal) =>
-                    !terminalAssignments.has(terminal.name) ||
-                    !terminalAssignments.get(terminal.name).some((scheduledShip) => isOverlapping(scheduledShip, ship))
-            );
+            // Фильтруем терминалы, учитывая, что если терминал универсальный, то он подходит для всех типов кораблей
+            let availableTerminal = filteredTerminals.find((terminal) => {
+                // Проверяем, что терминал подходит по типу или он универсальный
+                const isTerminalCompatible = terminal.type === "универсальный" || terminal.type === ship.type;
+                // Проверяем, что терминал свободен
+                const isTerminalFree = !terminalAssignments.has(terminal.name) ||
+                    !terminalAssignments.get(terminal.name).some((scheduledShip) => isOverlapping(scheduledShip, ship));
+                return isTerminalCompatible && isTerminalFree;
+            });
 
             let shiftAttempts = 0; // Счётчик попыток сдвига
 
             // Если терминал не найден, начинаем сдвигать время
             while (!availableTerminal && shiftAttempts < 24) { // Ограничим сдвиги до 24 часов (или другого числа)
                 ship = shiftArrivalTime(ship); // Сдвиг времени
-                availableTerminal = filteredTerminals.find(
-                    (terminal) =>
-                        !terminalAssignments.has(terminal.name) ||
-                        !terminalAssignments.get(terminal.name).some((scheduledShip) => isOverlapping(scheduledShip, ship))
-                );
+                availableTerminal = filteredTerminals.find((terminal) => {
+                    const isTerminalCompatible = terminal.type === "универсальный" || terminal.type === ship.type;
+                    const isTerminalFree = !terminalAssignments.has(terminal.name) ||
+                        !terminalAssignments.get(terminal.name).some((scheduledShip) => isOverlapping(scheduledShip, ship));
+                    return isTerminalCompatible && isTerminalFree;
+                });
                 shiftAttempts++; // Увеличиваем количество попыток сдвига
             }
 
@@ -113,7 +117,6 @@ const SchedulePages = () => {
         setSchedule(updatedSchedule);
         setErrors(newErrors);
     };
-
 
 
     // Group ships by the day of the week
