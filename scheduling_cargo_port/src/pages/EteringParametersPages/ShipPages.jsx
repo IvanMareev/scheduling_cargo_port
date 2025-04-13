@@ -130,10 +130,10 @@ const PortSchedulePage = () => {
                                 <MenuItem key={port.id} value={port.name}>{port.name}</MenuItem>
                             ))}
                         </Select>
-                        <Typography variant="subtitle1" sx={{ mt: 2 }}>Время обслуживания (часы)</Typography>
+                        <Typography variant="subtitle1" sx={{ mt: 2 }}>Время обслуживания (минуты)</Typography>
                         <TextField
                             fullWidth
-                            label="Время обслуживания (часы)"
+                            label="Время обслуживания (минуты)"
                             size="small"
                             value={newServiceTime}
                             onChange={(e) => setNewServiceTime(e.target.value)}
